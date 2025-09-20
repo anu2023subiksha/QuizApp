@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Pattern Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: url("./static/math-colourful-rulers-supplies-with-copy-space.jpg") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #4b6cb7;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question-container {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .selected {
+            background-color: #4b6cb7;
+            color: white;
+            border-color: #3a5a9b;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            
+        }
+        
+        .nav-btn {
+            width: 48%;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4b6cb7;
+            margin: 20px 0;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .error {
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .saving-message {
+            color: #4b6cb7;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Math Pattern Quiz</h1>
+        </div>
+        
+        <div class="content">
+            <div id="login-container">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name">
+                    <div id="name-error" class="error">Please enter your name</div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-no">Registration Number</label>
+                    <input type="text" id="reg-no" placeholder="Enter your registration number">
+                    <div id="reg-no-error" class="error">Please enter your registration number</div>
+                </div>
+                <button id="start-btn">Start Quiz</button>
+            </div>
+            
+            <div id="quiz-container" class="question-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress"></div>
+                </div>
+                <div id="question" class="question"></div>
+                <div id="options" class="options"></div>
+                <div class="navigation">
+                    <button id="prev-btn" class="nav-btn">Previous</button>
+                    <button id="next-btn" class="nav-btn">Next</button>
+                </div>
+                <div id="saving-message" class="saving-message">Saving your score...</div>
+            </div>
+            
+            <div id="result-container" class="result-container">
+                <h2>Quiz Completed!</h2>
+                <div id="result-message" class="message"></div>
+                <div class="score">Your Score: <span id="score-value">0</span>/10</div>
+                <button id="restart-btn">Take Quiz Again</button>
+            </div>
+        </div>
+        <!-- Footer Section -->
+        <div class="footer" style="background:#f1f1f1; text-align:center; padding:15px; font-size:14px; border-top:1px solid #ddd;">
+            <p><strong>Coordinator:</strong> Mr.V.Vivek, AP/CSE</p>
+            <p><strong>Co-Coordinator:</strong> Ms.S.Nandhini, AP/CSE</p>
+
+            <center><p><strong>Powered By</strong></p></center>
+            <p><strong>President:</strong> Anu Subiksha B G, III/CSE </p>
+            
+        </div>       
+    </div>
+
+    
+
+
+    <script>
+        // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        // Instructions:
+        // 1. In your Google Sheet, go to Extensions > Apps Script.
+        // 2. Paste the doPost function you provided into the script editor.
+        // 3. Save the script.
+        // 4. Click 'Deploy' > 'New deployment'.
+        // 5. Select type 'Web app'.
+        // 6. Execute as 'Me' and who has access 'Anyone'.
+        // 7. Click 'Deploy' and copy the URL.
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzc_cbp3fYzyxkvjys5uBc6uU8oYQnQlPh5efvHEdhmygGPf4z5F6tqsbdvydEtYisCw/exec";
+
+        const questions = [
+            {
+                "question": "To start, which variable definition is the clearest for solving the problem?",
+                "options": ["Let length = w", "Let width = w", "Let area = w", "Let perimeter = w"],
+                "answer": "Let width = w"
+            },
+            {
+                "question": "If width = w and length is 3 more than twice the width, which expression is length?",
+                "options": ["L = 2w + 3", "L = w + 3", "L = 3w + 2", "L = 2w - 3"],
+                "answer": "L = 2w + 3"
+            },
+            {
+                "question": "Which formula correctly gives the area of a rectangle?",
+                "options": ["Area = L + W", "Area = L * W", "Area = 2(L + W)", "Area = (L + W)/2"],
+                "answer": "Area = L * W"
+            },
+            {
+                "question": "Substitute L = 2w + 3 into the area formula (Area = L * W). Which equation is correct?",
+                "options": ["w * (2w + 3) = 65", "2(w + 3) = 65", "2w + 3w = 65", "w + (2w + 3) = 65"],
+                "answer": "w * (2w + 3) = 65"
+            },
+            {
+                "question": "Which is the standard quadratic form after expanding/subtracting 65 to one side?",
+                "options": ["2w^2 + 3w = 65", "2w^2 + 3w - 65 = 0", "w^2 + 3w - 65 = 0", "2w^2 - 65 = 0"],
+                "answer": "2w^2 + 3w - 65 = 0"
+            },
+            {
+                "question": "Compute the discriminant D = b^2 - 4ac for 2w^2 + 3w - 65 = 0. What is D?",
+                "options": ["401", "529", "625", "441"],
+                "answer": "529"
+            },
+            {
+                "question": "What is sqrt(D) for D = 529?",
+                "options": ["21", "22", "23", "24"],
+                "answer": "23"
+            },
+            {
+                "question": "Using the quadratic formula w = (-b ± sqrt(D)) / (2a) with a=2, b=3, which expression is correct?",
+                "options": ["w = (-3 ± 23) / 4", "w = (-3 ± 23) / 2", "w = (3 ± 23) / 4", "w = (-3 ± 23) / 8"],
+                "answer": "w = (-3 ± 23) / 4"
+            },
+            {
+                "question": "What is the positive root (the width) from w = (-3 + 23) / 4?",
+                "options": ["5", "-6.5", "10", "13"],
+                "answer": "5"
+            },
+            {
+                "question": "Verify: if width = 5, length = 2*5 + 3 and area = width*length. Which statement is correct?",
+                "options": ["Length = 13 and Area = 65 — Yes (correct)", "Length = 11 and Area = 55 — No", "Length = 15 and Area = 75 — No", "Length = 10 and Area = 50 — No"],
+                "answer": "Length = 13 and Area = 65 — Yes (correct)"
+            }
+        ];
+
+        // DOM elements
+        const loginContainer = document.getElementById('login-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const nameInput = document.getElementById('name');
+        const regNoInput = document.getElementById('reg-no');
+        const startBtn = document.getElementById('start-btn');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressEl = document.getElementById('progress');
+        const scoreValueEl = document.getElementById('score-value');
+        const restartBtn = document.getElementById('restart-btn');
+        const resultMessageEl = document.getElementById('result-message');
+        const savingMessageEl = document.getElementById('saving-message');
+
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let userName = '';
+        let userRegNo = '';
+
+        // Function to render the current question
+        function renderQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            questionEl.textContent = questionData.question;
+            optionsEl.innerHTML = '';
+
+            questionData.options.forEach(option => {
+                const optionEl = document.createElement('div');
+                optionEl.classList.add('option');
+                optionEl.textContent = option;
+                optionEl.addEventListener('click', () => selectOption(optionEl, option));
+                if (userAnswers[currentQuestionIndex] === option) {
+                    optionEl.classList.add('selected');
+                }
+                optionsEl.appendChild(optionEl);
+            });
+
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        // Function to handle option selection
+        function selectOption(selectedEl, selectedAnswer) {
+            Array.from(optionsEl.children).forEach(option => {
+                option.classList.remove('selected');
+            });
+            selectedEl.classList.add('selected');
+            userAnswers[currentQuestionIndex] = selectedAnswer;
+        }
+
+        // Function to update progress bar
+        function updateProgress() {
+            const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressEl.style.width = `${progressPercentage}%`;
+        }
+
+        // Function to update navigation button states
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            prevBtn.style.opacity = currentQuestionIndex === 0 ? 0.5 : 1;
+
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Submit';
+                nextBtn.style.background = 'linear-gradient(90deg, #dc3545 0%, #bb2b39 100%)';
+            } else {
+                nextBtn.textContent = 'Next';
+                nextBtn.style.background = 'linear-gradient(90deg, #4b6cb7 0%, #182848 100%)';
+            }
+        }
+
+        // Function to show an error message for an input field
+        function showError(elementId, show) {
+            document.getElementById(elementId).style.display = show ? 'block' : 'none';
+        }
+        
+        // Function to calculate and display score
+        function showResults() {
+            let score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (userAnswers[i] === questions[i].answer) {
+                    score++;
+                }
+            }
+            scoreValueEl.textContent = score;
+            quizContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+
+            // Send data to Google Sheet
+            submitQuizToSheet(userName, userRegNo, score);
+        }
+
+        // Function to send data to the Google Apps Script
+        async function submitQuizToSheet(name, regNo, score) {
+            savingMessageEl.style.display = 'block';
+            try {
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Required for simple CORS requests
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        regNo: regNo,
+                        score: score
+                    })
+                });
+
+                // Since we use 'no-cors', we can't read the response.
+                // We'll assume success for the UI update.
+                resultMessageEl.textContent = "Your results have been saved successfully!";
+
+            } catch (error) {
+                console.error('Error submitting data:', error);
+                resultMessageEl.textContent = "Failed to save data. Please try again.";
+            } finally {
+                savingMessageEl.style.display = 'none';
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            userName = nameInput.value.trim();
+            userRegNo = regNoInput.value.trim();
+            let isValid = true;
+            
+            if (userName === '') {
+                showError('name-error', true);
+                isValid = false;
+            } else {
+                showError('name-error', false);
+            }
+            
+            if (userRegNo === '') {
+                showError('reg-no-error', true);
+                isValid = false;
+            } else {
+                showError('reg-no-error', false);
+            }
+
+            if (isValid) {
+                loginContainer.style.display = 'none';
+                quizContainer.style.display = 'block';
+                currentQuestionIndex = 0;
+                userAnswers = new Array(questions.length).fill(null);
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (userAnswers[currentQuestionIndex] === null) {
+                // This is a placeholder for a non-alert message.
+                // For a real app, you would show a modal or an inline message.
+                console.log("Please select an option before moving on.");
+                return;
+            }
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            resultContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            nameInput.value = '';
+            regNoInput.value = '';
+        });
+    </script>
+</body>
+</html>
